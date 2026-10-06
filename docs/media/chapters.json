@@ -1,0 +1,290 @@
+[
+  {
+    "start": 0,
+    "duration": 11,
+    "title": "See the alternative. Decide with context.",
+    "text": "Page-by-page Project Design Review by Arik Aizikovich. A concrete comparison workspace for Codex and Claude Code.",
+    "capture": null,
+    "kind": "intro"
+  },
+  {
+    "start": 11,
+    "duration": 12,
+    "title": "More than one annotation",
+    "text": "Annotate points to an element. Here, inspect the current screen beside a concrete alternative, explain why, and preserve the decision and history.",
+    "capture": "project",
+    "kind": "screen"
+  },
+  {
+    "start": 23,
+    "duration": 13,
+    "title": "Give the details in your request",
+    "text": "Describe the project, products, platforms, language and review mode in the skill run. The agent manages setup; you do not edit configuration files.",
+    "capture": null,
+    "kind": "setup"
+  },
+  {
+    "start": 36,
+    "duration": 11,
+    "title": "Continue without repeating the setup",
+    "text": "Project settings are remembered locally. Continue the review reuses the same board; Switch to Brief changes only the requested setting.",
+    "capture": null,
+    "kind": "remember"
+  },
+  {
+    "start": 47,
+    "duration": 13,
+    "title": "One project. Products inside it.",
+    "text": "Morrow is the project. Provider and Customer are its products. Their page inventory lives on the left; tools and discussions stay on the right.",
+    "capture": "project",
+    "kind": "screen"
+  },
+  {
+    "start": 60,
+    "duration": 11,
+    "title": "Review each product journey",
+    "text": "Switch to Customer to review discovery. Each page has its own current and suggested evidence, with the relevant product options.",
+    "capture": "customer",
+    "kind": "screen"
+  },
+  {
+    "start": 71,
+    "duration": 11,
+    "title": "Move page by page",
+    "text": "Checkout is a different page, with its own comparison and decision. All records and payment details shown in this film are fictional.",
+    "capture": "checkout",
+    "kind": "screen"
+  },
+  {
+    "start": 82,
+    "duration": 11,
+    "title": "Shared belongs to the project",
+    "text": "When there is more than one product, Shared is always available. Review common account controls here, or show an honest empty state.",
+    "capture": "shared",
+    "kind": "screen"
+  },
+  {
+    "start": 93,
+    "duration": 12,
+    "title": "Choose each comparator independently",
+    "text": "The left side can show Current or a previous revision. The right can show Suggested, another revision, or a labeled external reference.",
+    "capture": "revisions",
+    "kind": "screen"
+  },
+  {
+    "start": 105,
+    "duration": 10,
+    "title": "Bring an external design into the comparison",
+    "text": "An inspected Stitch export can be one side of the review. This film uses a clearly labeled mock Stitch reference.",
+    "capture": "external-stitch",
+    "kind": "screen"
+  },
+  {
+    "start": 115,
+    "duration": 12,
+    "title": "The same workflow accepts other sources",
+    "text": "A Claude design can also be compared without replacing earlier evidence. This reference is simulated too; source labels must stay honest.",
+    "capture": "external-claude",
+    "kind": "screen"
+  },
+  {
+    "start": 127,
+    "duration": 11,
+    "title": "Appearance is a separate choice",
+    "text": "Light and Dark preserve the selected page and revision. Flags stay attached to their exact screenshot, including its appearance.",
+    "capture": "dark",
+    "kind": "screen"
+  },
+  {
+    "start": 138,
+    "duration": 12,
+    "title": "Check Android within its own context",
+    "text": "In Mobile, choose Android, iOS or PWA where relevant. Start by comparing current and proposed within the same platform.",
+    "capture": "android",
+    "kind": "screen"
+  },
+  {
+    "start": 150,
+    "duration": 12,
+    "title": "Then inspect iOS",
+    "text": "Keep the task, state, data, locale, theme and revision aligned. Intentional native navigation and safe-area differences should be explained.",
+    "capture": "ios",
+    "kind": "screen"
+  },
+  {
+    "start": 162,
+    "duration": 13,
+    "title": "Compare the PWA on par",
+    "text": "Judge equivalent information, primary actions and outcomes across platforms. These platform screens are simulations, not physical-device validation.",
+    "capture": "pwa",
+    "kind": "screen"
+  },
+  {
+    "start": 175,
+    "duration": 15,
+    "title": "Language follows your request",
+    "text": "Ask for any review language, including RTL. The agent localizes generated content. A missing product-locale capture stays missing; it is never silently relabeled.",
+    "capture": "missing-language",
+    "kind": "screen"
+  },
+  {
+    "start": 190,
+    "duration": 12,
+    "title": "Flag the exact element or image",
+    "text": "A numbered flag records the exact source image and revision. Hover or keyboard focus opens its RichTip: target, note and source context.",
+    "capture": "richtip",
+    "kind": "screen"
+  },
+  {
+    "start": 202,
+    "duration": 11,
+    "title": "Pointing is optional",
+    "text": "Keyboard placement lets you choose the side and normalized position. General notes can describe the whole page without any coordinate.",
+    "capture": "keyboard-flag",
+    "kind": "screen"
+  },
+  {
+    "start": 213,
+    "duration": 11,
+    "title": "Keep the page-level conversation clear",
+    "text": "Use a general page note for hierarchy, flow or overall direction. Save and Export remain together in the bottom-right controls.",
+    "capture": "page-notes",
+    "kind": "screen"
+  },
+  {
+    "start": 224,
+    "duration": 12,
+    "title": "See through your flags",
+    "text": "The visible opacity slider ranges from zero to one hundred percent. Your chosen opacity persists across pages, revisions and reloads.",
+    "capture": "opacity40",
+    "kind": "screen"
+  },
+  {
+    "start": 236,
+    "duration": 13,
+    "title": "A temporary peek with Ctrl",
+    "text": "Hold Ctrl to hide flags and RichTips. Release it to restore your saved opacity. This is a display preference, not an annotation edit.",
+    "capture": null,
+    "kind": "ctrl"
+  },
+  {
+    "start": 249,
+    "duration": 12,
+    "title": "Open either side at full size",
+    "text": "The full-size viewer loads both sides in the same frame. Flip with the button or Space and F; arrows select a side; Escape returns.",
+    "capture": "full-left",
+    "kind": "screen"
+  },
+  {
+    "start": 261,
+    "duration": 12,
+    "title": "Flip instantly, one on top of the other",
+    "text": "Switch without a fade or layout shift. The shared scale, origin and pan make the difference easier to inspect; mismatched dimensions are disclosed.",
+    "capture": "full-right",
+    "kind": "flip"
+  },
+  {
+    "start": 273,
+    "duration": 12,
+    "title": "Brief keeps the review compact",
+    "text": "Brief shows comparisons, provenance, concise scope, feedback and decisions. It avoids generating long explanations that were never requested.",
+    "capture": "brief",
+    "kind": "screen"
+  },
+  {
+    "start": 285,
+    "duration": 16,
+    "title": "Full explains the elements below",
+    "text": "Full adds what exists, what changes, why, what to keep, accessibility considerations, platform parity, status and unresolved choices. Saved details match their review revision.",
+    "capture": "full-details",
+    "kind": "screen"
+  },
+  {
+    "start": 301,
+    "duration": 13,
+    "title": "Preserve every iteration",
+    "text": "First, Back, Next and Latest stay inside one board. Older screenshots, flags, notes and decisions remain available under their own revision.",
+    "capture": "first-revision",
+    "kind": "screen"
+  },
+  {
+    "start": 314,
+    "duration": 11,
+    "title": "Discuss in context",
+    "text": "Open a discussion about the page, a part or a flag. The right drawer keeps that exact context while you explain the requested change.",
+    "capture": "discussion",
+    "kind": "screen"
+  },
+  {
+    "start": 325,
+    "duration": 12,
+    "title": "A request can queue the next pass immediately",
+    "text": "Request these changes and start saves a bounded prototype request in one action. This unconnected demo correctly shows Queued, not Working.",
+    "capture": "queued",
+    "kind": "screen"
+  },
+  {
+    "start": 337,
+    "duration": 14,
+    "title": "Keep reviewing while real work runs",
+    "text": "With a connected agent, a claimed request can run in the background. A verified result becomes a new immutable revision; explicit historical views and unsaved notes remain selected.",
+    "capture": null,
+    "kind": "worker"
+  },
+  {
+    "start": 351,
+    "duration": 13,
+    "title": "Preview the prepared visual source",
+    "text": "A prepared source opens as a preserved interactive snapshot. Try the fictional controls, then return to the review. New requests need an updated source.",
+    "capture": "preview",
+    "kind": "screen"
+  },
+  {
+    "start": 364,
+    "duration": 13,
+    "title": "An interaction is still a prototype",
+    "text": "This button responds inside the isolated preview. No live booking, account or payment action is connected. Previewing does not approve the design.",
+    "capture": "preview-interaction",
+    "kind": "screen"
+  },
+  {
+    "start": 377,
+    "duration": 11,
+    "title": "Approval has precise meaning",
+    "text": "Approved as-is accepts the shown design without requested edits. This is a demonstration reviewer action on disposable fictional data.",
+    "capture": "approved-as-is",
+    "kind": "screen"
+  },
+  {
+    "start": 388,
+    "duration": 12,
+    "title": "Acceptance with changes is a distinct decision",
+    "text": "Approved with changes records acceptance of an edit scope. Changes requested remains pending feedback, separate from work authorization and deployment.",
+    "capture": "approved-changes",
+    "kind": "screen"
+  },
+  {
+    "start": 400,
+    "duration": 11,
+    "title": "Reject without losing evidence",
+    "text": "Reject declines the proposal while keeping notes and previews. Reopen lets the review continue; it never changes the shipping product.",
+    "capture": "rejected",
+    "kind": "screen"
+  },
+  {
+    "start": 411,
+    "duration": 13,
+    "title": "Share this exact review",
+    "text": "The link includes page, feedback revision, source pair, capture axes and detail mode. A loopback link is local; copying it does not publish the board.",
+    "capture": "share",
+    "kind": "screen"
+  },
+  {
+    "start": 424,
+    "duration": 14,
+    "title": "A review you can return to",
+    "text": "Use the same skill in Codex or Claude Code. Give your project details, inspect alternatives, request a bounded iteration, and continue with preserved context.",
+    "capture": null,
+    "kind": "outro"
+  }
+]

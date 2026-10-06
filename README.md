@@ -2,6 +2,10 @@
 
 **Created by Arik Aizikovich.** A reusable agent skill and local review workspace for **Codex and Claude Code**. Compare a project's current UI, suggested designs, preserved revisions and external references while reviewing one page at a time.
 
+[![Watch the narrated Project Design Review walkthrough](docs/media/poster.jpg)](https://github.com/E-FL/project-design-review/releases/download/v0.2.0/page-by-page-design-review-v0.2.mp4)
+
+**[Watch the video](https://github.com/E-FL/project-design-review/releases/download/v0.2.0/page-by-page-design-review-v0.2.mp4)** — 7:18, 1080p, English voice and on-screen narration, captions and 36 chapters. [Repository video file](docs/media/page-by-page-design-review-v0.2.mp4) · [Chapter guide](docs/media/README.md) · [Transcript](docs/media/transcript.md). The refreshed film includes remembered invocation details, Brief/Full, flag opacity, Ctrl peek and instant flipping. All screens and data are fictional; explanatory diagrams and the unconnected worker flow are labeled.
+
 ![Brief review with project products, independent comparisons and a right-side tools drawer](docs/images/brief-review.jpg)
 
 ## Why use it instead of a simple annotation?
