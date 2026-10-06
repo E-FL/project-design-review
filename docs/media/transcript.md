@@ -1,9 +1,9 @@
 # Project Design Review v0.2 walkthrough
 
-Created by Arik Aizikovich. Fictional Morrow captures, on-screen callouts and local synthesized English narration. Setup, Ctrl visibility and connected-worker diagrams are explanatory illustrations; the demo worker is unconnected.
+Visual credits: Arik Aizikovich. Narration: ElevenLabs, Roger voice, Eleven v4. The author name is not spoken. Fictional Morrow captures and on-screen callouts; setup, Ctrl visibility and connected-worker diagrams are explanatory illustrations. The demo worker is unconnected.
 
 00:00:00.000  See the alternative. Decide with context.
-Page-by-page Project Design Review by Arik Aizikovich. A concrete comparison workspace for Codex and Claude Code.
+Page-by-page Project Design Review. A concrete comparison workspace for Codex and Claude Code.
 
 00:00:11.000  More than one annotation
 Annotate points to an element. Here, inspect the current screen beside a concrete alternative, explain why, and preserve the decision and history.

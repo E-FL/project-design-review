@@ -1,0 +1,11 @@
+{
+  "provider": "ElevenLabs",
+  "voice": "Roger - Laid-Back, Casual, Resonant",
+  "model": "Eleven v4",
+  "language": "en",
+  "chapterCount": 36,
+  "type": "AI-generated narration",
+  "spokenAuthorCredit": false,
+  "visualAuthorCredit": "Arik Aizikovich",
+  "processing": "Chapter-aligned audio; natural speaking rate retained; final voice normalized to -16 LUFS."
+}

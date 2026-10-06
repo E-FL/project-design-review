@@ -1,6 +1,6 @@
 # Narrated video walkthrough
 
-**Created by Arik Aizikovich.** Refreshed for skill v0.2: 7 minutes 18 seconds, 1920 × 1080, 25 fps. H.264 video, AAC English synthesized voice, embedded captions and chapter metadata. Every scene includes a readable on-screen narration card; the actual UI captures are paired with highlighted controls.
+**Created by Arik Aizikovich.** Refreshed for skill v0.2: 7 minutes 18 seconds, 1920 × 1080, 25 fps. H.264 video, AAC English narration by ElevenLabs (Roger, Eleven v4), embedded captions and chapter metadata. Every scene includes a readable on-screen narration card; the actual UI captures are paired with highlighted controls.
 
 [Watch or download the MP4](https://github.com/E-FL/project-design-review/releases/download/v0.2.0/page-by-page-design-review-v0.2.mp4) · [Repository file](page-by-page-design-review-v0.2.mp4) · [Captions](walkthrough.vtt) · [Transcript](transcript.md) · [Chapter data](chapters.json)
 
@@ -57,6 +57,6 @@ The prepared interactive preview was added to the recording fixture. A clean sta
 
 ## Verification
 
-The final MP4 was decoded from start to end with no reported errors. Media streams, dimensions, frame rate, duration and author metadata were checked with FFprobe. Narration segments were checked for nonzero audio and aligned to their chapters. Captions and chapter data cover the full duration. Selected rendered frames were inspected for readability, source context and accurate labels.
+The final MP4 was decoded from start to end with no reported errors. Media streams, dimensions, frame rate, duration and author metadata were checked with FFprobe. ElevenLabs narration segments were verified against the requested chapter text, checked for nonzero audio and aligned to their chapters. The author name appears in visual credits and is omitted from speech. Captions and chapter data cover the full duration. Selected rendered frames were inspected for readability, source context and accurate labels.
 
 The video is committed directly in the repository and also uploaded as a v0.2.0 release asset for convenient playback/download. Checksums are in [walkthrough-SHA256SUMS.txt](walkthrough-SHA256SUMS.txt). The repository's Apache 2.0 license and Arik Aizikovich attribution apply.
