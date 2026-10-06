@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.review-worker-token
+feedback/
+preview-requests/
+previews/
+dist/
+.DS_Store

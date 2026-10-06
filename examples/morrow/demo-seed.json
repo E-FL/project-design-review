@@ -1,0 +1,87 @@
+{
+  "feedback": {
+    "key": "P01-r3",
+    "version": 1,
+    "data": {
+      "preference": "unreviewed",
+      "notes": "Demo note: keep the clearer hierarchy; review the primary action placement.",
+      "parts": {},
+      "pins": [
+        {
+          "id": "demo-flag-1",
+          "side": "proposed",
+          "image": "captures/dashboard-proposed-r3-desktop-light-PWA-final.png",
+          "x": 0.72,
+          "y": 0.15,
+          "view": "desktop · pwa · en · light · Default",
+          "text": "Demo flag: place the check-in action beside its session context. This request is not applied to r3.",
+          "target": "Next-session card",
+          "source": {
+            "sourceId": "revision:r3",
+            "label": "Revision r3 · suggested",
+            "kind": "revision",
+            "revision": "r3",
+            "image": "captures/dashboard-proposed-r3-desktop-light-PWA-final.png",
+            "view": "desktop · pwa · en · light · Default",
+            "hash": "b1a46d4e4af3d3f396632916adbc9180043e0dbc54946a8d7d13c2b519f92ef8"
+          }
+        }
+      ],
+      "reviewStatus": "pending"
+    }
+  },
+  "details": {
+    "key": "P01-r3",
+    "feedbackVersion": 1,
+    "summary": "Fictional dashboard review: compare the baseline and three preserved design iterations. The sample flag asks for a further action-placement change; it is pending, not already applied.",
+    "elements": [
+      {
+        "name": "Next-session hierarchy",
+        "current": "Session information competes with summary metrics.",
+        "proposed": "The next session becomes the first meaningful task on the page.",
+        "reason": "Providers can identify what they need to do next before reading secondary information.",
+        "keep": "Session time, participant and service context.",
+        "accessibility": "Use a clear heading and a descriptive primary action. Verify reading order and focus in the actual app.",
+        "platform": "Preserve the task and information across Android, iOS and PWA; adapt safe areas and navigation.",
+        "status": "Shown in the fictional r3 capture; no shipping app was changed."
+      },
+      {
+        "name": "Check-in action · saved flag 1",
+        "current": "The existing action is separated from the session information.",
+        "proposed": "The saved request moves the check-in action into the next-session card.",
+        "reason": "Placing the action beside its context reduces searching and makes the intended task explicit.",
+        "keep": "All existing session details and eligibility rules.",
+        "accessibility": "Use a named button, adequate contrast and a touch target suited to the platform.",
+        "platform": "Review the same action, state and fixture data on each supported platform.",
+        "status": "Changes requested. This placement is not yet applied to r3."
+      },
+      {
+        "name": "Secondary metrics",
+        "current": "Several metrics attract equal visual attention.",
+        "proposed": "Supporting metrics sit below the main task with a quieter visual treatment.",
+        "reason": "The dashboard should prioritize an actionable session over informational totals.",
+        "keep": "Access to useful performance and schedule information.",
+        "status": "Visual proposal only, awaiting review."
+      },
+      {
+        "name": "Navigation and responsive layout",
+        "current": "The baseline distributes attention across navigation and cards.",
+        "proposed": "The proposal gives the task area more space while retaining familiar destinations.",
+        "reason": "Keep navigation predictable while the content hierarchy improves.",
+        "platform": "Mobile and desktop captures use comparable fictional data. Mobile platform variants here are simulations, not native-device proof.",
+        "status": "Mock evidence only."
+      }
+    ],
+    "items": [
+      {
+        "title": "Apply only the authorized next-session change",
+        "detail": "If the request is picked up by a connected worker, preserve r3 and publish a new immutable revision with its own captures and review decision."
+      }
+    ],
+    "scope": "Fictional visual review. No product implementation, physical-device validation or deployment has occurred. A connected agent is required to process queued work.",
+    "open": [
+      "Confirm the label and eligibility behavior for check-in.",
+      "Verify keyboard, screen-reader and touch behavior in the actual product before declaring accessibility or platform parity."
+    ]
+  }
+}
