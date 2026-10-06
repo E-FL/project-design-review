@@ -1,4 +1,4 @@
 interface:
   display_name: "Page-by-page design review"
   short_description: "Compare project designs, revisions and platform parity"
-  default_prompt: "Use $project-design-review to create a page-by-page project review with current and suggested screens, preserved revisions and saved feedback."
+  default_prompt: "Use $project-design-review to create or resume a page-by-page review from my request, remember the project setup, and preserve comparisons, revisions and feedback."

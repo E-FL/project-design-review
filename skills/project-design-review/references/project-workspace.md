@@ -4,6 +4,8 @@
 
 ## Configuration
 
+Project configuration is agent-managed from the skill invocation and remembered per workspace. The user does not edit this JavaScript. Read [invocation-and-memory.md](invocation-and-memory.md) to create/resume/update the setup. The schema below documents the generated output for agents and developers.
+
 ```js
 window.reviewConfig = {
  reviewLanguage: 'en', direction: 'ltr',

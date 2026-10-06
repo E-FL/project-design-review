@@ -6,3 +6,4 @@ preview-requests/
 previews/
 dist/
 .DS_Store
+.design-review/

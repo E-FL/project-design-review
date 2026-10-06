@@ -38,6 +38,8 @@ class PackageTests(unittest.TestCase):
             notes = json.loads((target/'feedback/notes.json').read_text(encoding='utf-8'))
             detail = json.loads((target/'review-details/P01-r3-v1.json').read_text(encoding='utf-8'))
             self.assertEqual(notes['records'][detail['key']]['version'], detail['feedbackVersion'])
+            for pin in notes['records'][detail['key']]['data']['pins']:
+                self.assertRegex(pin['id'], r'^p[a-z0-9]{1,40}$')
             self.assertEqual(len(detail['elements']), 4)
             self.run_script('create_demo.py', target, success=False)
 

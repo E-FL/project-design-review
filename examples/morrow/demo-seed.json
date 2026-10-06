@@ -8,7 +8,7 @@
       "parts": {},
       "pins": [
         {
-          "id": "demo-flag-1",
+          "id": "pdemoflag1",
           "side": "proposed",
           "image": "captures/dashboard-proposed-r3-desktop-light-PWA-final.png",
           "x": 0.72,

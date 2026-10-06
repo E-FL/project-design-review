@@ -65,6 +65,29 @@ Example request:
 
 > Use project-design-review in Full mode for this project's Provider and Customer products. Compare each current screen with a suggested revision, keep shared components in Shared, and explain the elements in Hebrew. Use synthetic fixtures.
 
+## Give details in the skill run
+
+After installation, describe the review directly. **You do not edit configuration files or run setup commands.** The agent creates the board, prepares the page inventory/captures and explanations, localizes the review and starts or reuses its local server.
+
+Codex:
+
+```text
+$project-design-review Review Morrow with Provider and Customer products.
+Provider: Android, iOS and PWA; Customer: PWA. Mobile and desktop.
+Use Full mode, explain in Hebrew, and remember this project setup.
+```
+
+Claude Code:
+
+```text
+/project-design-review Review Morrow with Provider and Customer products,
+Android/iOS/PWA, mobile and desktop, Full mode, in Hebrew. Remember the setup.
+```
+
+Later, invoke the skill with **“Continue the review”** or **“Switch to Brief”**. Saved details are reused; new instructions override only the specified choices. Project settings live in `.design-review/project.json` inside the active project, including the canonical board, products, capture axes, language, mode and local port. The agent manages this file. Feedback and visual revision history remain separate and preserved. Each project has its own setup.
+
+The agent's [setup helper](skills/project-design-review/scripts/configure_review.py) resolves parameters and guards concurrent updates. See [invocation and project memory](skills/project-design-review/references/invocation-and-memory.md) for the agent workflow. Remembered settings do not imply a running server or connected worker; the agent verifies those on each run.
+
 ## Run the fictional showcase
 
 ```sh
@@ -79,15 +102,9 @@ Morrow is entirely fictional. Its Provider, Customer and Shared pages have three
 
 Try switching products/pages, comparing r1/r3, selecting an external mock reference, hovering the dashboard flag, changing opacity, holding Ctrl, choosing Full, and opening a side full-size to flip with Space. Existing demo feedback is synthetic and safe to change in the generated folder.
 
-## Create a real project review
+## Review your project
 
-```sh
-python skills/project-design-review/scripts/create_review.py ../my-review --mode full
-cd ../my-review
-node review-server.mjs
-```
-
-Edit `review-data.js` to define the project, products, pages and relevant view axes; add actual current/proposed captures. Inventory-only pages start with an honest missing-design state. Configure inspected external sources and prepared preview sources as needed. Full mode must be supplied with authored or versioned explanation content; the starter does not invent it.
+Invoke the skill in your project and provide whichever details matter to you. The agent infers the rest from the project, asks only for essential missing choices, remembers the resolved setup and manages configuration/captures automatically. Inventory-only pages keep an honest missing-design state; Full explanations and inspected external sources are prepared by the agent under the same evidence rules.
 
 The server binds to loopback and saves feedback in the review folder with a browser draft backup. **Share review** copies an exact local URL; it does not deploy the board or make it publicly reachable.
 
@@ -105,7 +122,7 @@ python -m unittest discover -s tests -v
 node --test skills/project-design-review/assets/comparator/review-revisions.test.mjs skills/project-design-review/assets/comparator/review-server.test.mjs
 ```
 
-Tests cover installation preservation, clean fictional generation, preserved asset hashes, protected revision publication and feedback/version handling. Browser checks cover the interactive controls; these checks do not claim physical-device parity or end-to-end Claude/Codex model execution.
+Tests cover remembered invocation details, no-op resume, partial overrides, project isolation, setup conflicts, installation preservation, clean fictional generation, preserved asset hashes, protected revision publication and feedback/version handling. Browser checks cover the interactive controls; these checks do not claim physical-device parity or end-to-end Claude/Codex model execution.
 
 ## Author and license
 

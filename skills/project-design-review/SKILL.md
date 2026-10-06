@@ -3,12 +3,18 @@ name: project-design-review
 description: Build project-based page-by-page design review workspaces with side-by-side current, revision and external-source comparisons, saved flags, discussions, Brief/Full explanations and instant full-size flipping. Use for redesigns, iterative review and Android/iOS/PWA parity.
 metadata:
   author: Arik Aizikovich
-  version: 0.1.0
+  version: 0.2.0
 ---
 
 # Page-by-page project design review
 
 Created by **Arik Aizikovich**. Build a concrete review workspace for a project, with its products inside it. Compare current screens and proposed designs while preserving revisions, explanations, feedback and decisions. Use the local starter with either Codex or Claude Code; no client-specific API is required to run the board.
+
+## Invocation and remembered setup
+
+Accept project details directly in the skill request: project/products, relevant platforms/viewports, pages or sources, Brief/Full and language. The user must not edit configuration files or run setup commands. Resolve details from the request and active project, use sensible defaults, and ask only when missing information materially blocks work. Own setup, capture preparation, localization, explanation generation and server startup.
+
+Read `.design-review/project.json` in the project workspace on every invocation. Reuse its canonical board and saved settings; apply current overrides without discarding unspecified details, visual history or feedback. Persist setup per project, separate from global agent memory and the installed skill. A bare “continue” reuses it. Do not carry another project's data into this review. Use `scripts/configure_review.py` internally to create/resume/update the managed setup, with expected-version checks for changes. See [invocation and project memory](references/invocation-and-memory.md) for input schema, adoption and resume behavior.
 
 ## Choose the right workflow
 
@@ -59,6 +65,6 @@ Preview uses a preserved interactive source that actually covers the saved requi
 
 ## Create and verify a board
 
-Run `python scripts/create_review.py <new-directory> --mode brief` (or `full`) relative to this skill. Edit review-data.js, add verified screenshots and authored explanations, then run `node review-server.mjs` from the new folder. Default port: 5217; REVIEW_PORT selects another port. Reuse an existing server where practical. Keep the server local and separate from product APIs.
+The agent passes resolved invocation details to `python scripts/configure_review.py --workspace <project> --stdin`, prepares verified captures and authored explanations, then starts/reuses `node review-server.mjs` from the returned board with its saved port. Configuration is generated automatically; never delegate file editing to the user. `create_review.py` remains a low-level starter copier for developer/test use. Keep the server local and separate from product APIs.
 
 Verify with a disposable fixture: save/reload notes; switch products/pages/revisions/source pairs; flag and inspect RichTips; check Ctrl/opacity persistence; toggle Brief/Full; open both full-size sides and flip with preserved pan; check drafts, missing captures, exact links, narrow layout and exports. Test worker/version conflicts using the bundled Node tests. Never approve/reject or queue artificial work on the user's populated board.
