@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildReviewPreview} from './review-preview.mjs';
 import {readIssues,updateIssue} from './review-issues.mjs';
+import {readCaptureJobs,updateCaptureJob} from './review-captures.mjs';
 import {randomBytes,timingSafeEqual} from 'node:crypto';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.ttf':'font/ttf','.json':'application/json; charset=utf-8','.md':'text/markdown; charset=utf-8'};
 const preferences=new Set(['unreviewed','current','proposed','mixed','rework']);
@@ -25,15 +26,15 @@ export function createReviewServer(root){
       const hosts=[`127.0.0.1:${port}`,`localhost:${port}`];
       if(!hosts.includes(req.headers.host))return send(403,{error:'Local review host required'});
       const url=new URL(req.url,'http://'+req.headers.host);
-      if(url.pathname==='/api/review-issues'||url.pathname==='/api/review-work'){
-        const worker=url.pathname==='/api/review-work';
+      if(['/api/review-issues','/api/review-work','/api/review-captures','/api/review-capture-work'].includes(url.pathname)){
+        const capture=url.pathname.includes('capture'),worker=url.pathname==='/api/review-work'||url.pathname==='/api/review-capture-work';
         if(worker){const token=await workerToken(),supplied=req.headers['x-review-worker-token']||'';if(typeof supplied!=='string'||supplied.length!==token.length||!timingSafeEqual(Buffer.from(supplied),Buffer.from(token)))return send(403,{error:'Review worker required'});}
-        if(req.method==='GET'){await writes;return send(200,await readIssues(root));}
+        if(req.method==='GET'){await writes;return send(200,await (capture?readCaptureJobs(root):readIssues(root)));}
         if(req.method!=='POST')return send(405,{error:'Method not allowed'});
         if((!worker&&req.headers.origin!=='http://'+req.headers.host)||!req.headers['content-type']?.startsWith('application/json'))return send(403,{error:'Authorized JSON request required'});
         const chunks=[];let size=0;for await(const chunk of req){size+=chunk.length;if(size>40000)return send(413,{error:'Issue request too large'});chunks.push(chunk);}
         let input;try{input=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Invalid JSON'});}
-        const operation=writes.then(()=>updateIssue(root,input,worker));writes=operation.then(()=>{},()=>{});const result=await operation;return send(result.code,result.body);
+        const operation=writes.then(()=>capture?updateCaptureJob(root,input,worker):updateIssue(root,input,worker));writes=operation.then(()=>{},()=>{});const result=await operation;return send(result.code,result.body);
       }
       if(url.pathname==='/api/review-preview'){
         if(req.method!=='POST')return send(405,{error:'Method not allowed'});

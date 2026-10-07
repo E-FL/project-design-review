@@ -4,6 +4,8 @@ The board stores issue chats in feedback/issues.json. review-issues.js/css provi
 
 ## Worker procedure
 
+During an authorized live review, check both `node review-worker.mjs inbox` and `node review-worker.mjs captures` in the existing worker cycle. Missing-capture clicks already authorize the exact frozen capture scope; do not ask the reviewer to edit files, approve it again, or send another chat message. Claim an actionable capture only when a real producer can start, use the requested source rather than the latest unrelated build, and publish through `capture-update`. Follow [asynchronous captures](async-captures.md) for source reproduction, localization, inspection, failure/retry and supplemental publication. Keep the reviewer free to navigate while work runs. An unconnected queue stays queued; report connection and cadence accurately.
+
 For a “Review details” discussion, follow [compact-review.md](compact-review.md): generate the requested explanation only, save its immutable JSON for the stated page/revision/feedback version, and reply with the link. This design-only request does not require or imply approval of a visual revision or product work. Keep an unconnected request waiting; do not report active generation without a real worker.
 
 Run `node review-worker.mjs inbox` from the review folder. Read only actionable discussions and approved work. For a reply, save JSON with action reply, id, expectedVersion and text, then run `node review-worker.mjs update --file <file>`. Unapproved discussions receive design responses only.

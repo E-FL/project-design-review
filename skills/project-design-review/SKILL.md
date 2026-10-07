@@ -3,7 +3,7 @@ name: project-design-review
 description: Create and review page alternatives using Stitch, Claude Design or available generators; extract individual screens from design exports into a project-based side-by-side viewer with revisions, flags and Brief/Full explanations. Use for substantial redesigns, iterative review and Android/iOS/PWA parity.
 metadata:
   author: Arik Aizikovich
-  version: 0.3.0
+  version: 0.4.0
 ---
 
 # Page-by-page project design review
@@ -36,6 +36,7 @@ A saved provider preference is not a connection. Report prepared, dispatched and
 - Place pages on the left, independent comparators in the center, and Tools & notes / Discussion in a right drawer. Keep preview, decisions, save and export at its bottom. On narrow screens the drawer overlays content without destroying drafts.
 - Each side chooses Current, any preserved revision or a labeled external source. Default to Current / latest Suggested, or the newly imported alternative after an import. Explicit review links keep their chosen sources. The selected feedback revision remains independent of the two displayed sources and travels with links, notes and exports.
 - Above the pair show relevant Light/Dark and Mobile/Desktop axes. In Mobile show relevant Android/iOS/PWA options. Keep task, state, locale and other axes stable; never substitute missing evidence under another label.
+- Show capture availability on each axis button for the selected source pair and remaining axes: both sides, one side or missing. Missing options stay selectable. Each missing side offers **Produce this capture**, saving and queueing the exact source/view in one click. A connected worker produces it asynchronously; show queued before claim, working only after claim, and failures with retry. Insert verified results in place while preserving notes, navigation and history. See [asynchronous captures](references/async-captures.md) for the worker/publication contract.
 - Inspect imported rendered captures before calling them Stitch or Claude exports. Preserve original artboards/files. If using Stitch to design the workspace itself, use a separate fictional project and adapt the inspected design onto working modules; a generated image does not prove working review behavior.
 - Support source-bound numbered flags on elements/images and general page notes. Record source id/revision/provider, exact image, view axes, normalized coordinates, optional target and raw note. Never transfer coordinates onto a changed image. Screenshot points are not fabricated DOM selectors.
 - Hover or keyboard focus shows a RichTip; click edits the note in the drawer. Tips must be hoverable, Escape-dismissible and safe for untrusted text. Offer keyboard flag placement.

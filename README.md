@@ -30,6 +30,7 @@ The visible selector preserves notes and sources and saves the selected mode per
 - **Independent sources:** Current, any preserved revision, or a labeled external design on either side. Compare previous/new revisions or an inspected Stitch/Claude source with a proposal.
 - **Design generation and import:** The agent hands bounded page briefs to an available Stitch, Claude Design or other design workflow, extracts individual artboards from exports, and opens Current / the relevant alternative directly. Multi-screen canvases can be cropped exactly, with originals and provenance preserved.
 - **Relevant capture axes:** Light/Dark, Mobile/Desktop and Android/iOS/PWA in Mobile; locale and state where configured. Missing captures stay explicit.
+- **Availability and asynchronous capture:** Top options show both sides available, one side available or missing. Each missing side offers **Produce this capture**; the exact source/view queues in one click and appears automatically after a connected worker verifies it. Review other pages while it runs; failed jobs offer retry.
 - **Precise feedback:** Source-bound numbered flags for elements/images, hover/focus RichTips, keyboard placement, whole-page notes and contextual discussions.
 - **Flag visibility:** Hold **Ctrl** to peek through hidden flags; release restores the saved setting. A visible **0–100% opacity slider** saves the preference across pages, revisions and reloads.
 - **Instant full-size comparison:** Open either side; **Space/F** flips, arrows choose a side, **Esc** closes. Both images share scale/origin and preserve pan. Dimension mismatches are disclosed.
@@ -148,13 +149,19 @@ The starter is **unconnected**. Local files cannot generate AI replies or design
 
 See [worker connection and publication](skills/project-design-review/references/issue-worker.md), [shared worker ownership](skills/project-design-review/references/shared-conversations.md), [preview coverage](skills/project-design-review/references/preview-configuration.md) and [Brief/Full explanation schema](skills/project-design-review/references/compact-review.md). Review acceptance does not authorize product implementation or deployment.
 
+Missing-view requests have a separate [capture queue and publication contract](skills/project-design-review/references/async-captures.md), available through `review-worker.mjs captures` and `capture-update`. It produces supplemental source/view captures without changing the review revision or requiring a fake interactive preview. No connected producer means queued, not working.
+
+![Availability badges and an asynchronous Hebrew capture result, with the other side still requestable](docs/images/async-captures.jpg)
+
+This fictional browser verification produced a localized current screen: English has both captures, Hebrew has one, and the missing suggested side retains its **Produce this capture** button. Completion inserted the image and updated the badges while keeping the review notes and keyboard focus in place.
+
 ## Validation
 
 ```sh
 python scripts/validate_package.py
 python -m pip install -r skills/project-design-review/scripts/requirements-design.txt
 python -m unittest discover -s tests -v
-node --test skills/project-design-review/assets/comparator/review-revisions.test.mjs skills/project-design-review/assets/comparator/review-server.test.mjs
+node --test skills/project-design-review/assets/comparator/review-revisions.test.mjs skills/project-design-review/assets/comparator/review-server.test.mjs skills/project-design-review/assets/comparator/review-captures.test.mjs
 ```
 
 Tests cover exact crop pixels, original bytes/hashes, immutable imports, invalid mapping/bounds/axes, scoped generation briefs, remembered provider choices, setup conflicts, installation preservation, clean fictional generation, protected revision publication and feedback/version handling. Browser checks cover the interactive controls; these checks do not claim physical-device parity or end-to-end Claude/Codex model execution.
