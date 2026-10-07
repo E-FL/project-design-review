@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 — 2026-10-07
+
+Add agent-managed Stitch, Claude Design and other generator handoffs with remembered per-project provider choices. Freeze scoped page/view briefs and baseline hashes, extract exact artboards from combined canvases, preserve original exports and extraction provenance, and open Current / the imported alternative directly. New sources remain immutable and source-bound feedback survives later passes. Includes an executable fictional multi-screen import demo and extraction/version/isolation tests. Actual generation uses the client's connected tools or authorized browser; no remote AI service is bundled.
+
 ## 0.2.0 — 2026-10-06
 
 Configure the review from conversational skill-run details and remember it per project. The agent-managed setup helper creates/resumes the canonical board, retains unspecified settings and current inventory, guards setup versions and preserves feedback/captures/revisions. Users no longer edit configuration files. Adds invocation examples for both Codex and Claude Code and persistence/isolation tests.

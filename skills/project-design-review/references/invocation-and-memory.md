@@ -2,6 +2,8 @@
 
 The user invokes the skill conversationally. Do not ask them to edit JavaScript, JSON, manifests or environment files. The agent resolves their request, writes the managed setup, inventories/captures the project, localizes the board and starts/reuses its server. Helpers below are agent implementation tools, not user setup steps.
 
+Designer choices also belong to the invocation: “Use Stitch for alternatives and remember it” saves `designGeneration.provider` and the actual project URL when known. Later runs reuse the preference and canonical board, then verify the provider connection. Read [design generation and imports](design-generation-and-import.md) for prepared briefs, provider handoffs and automatic per-page artboard extraction. Changing providers clears the old service's project URL unless a new one is supplied.
+
 ## First invocation
 
 Choose one stable project root for remembered setup: normally the repository root, or the explicit workspace the user selected. A later run from a nested folder should resolve that same root. Fictional demos use their own workspace rather than adopting an unrelated real product's setup.

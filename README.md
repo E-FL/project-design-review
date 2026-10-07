@@ -28,6 +28,7 @@ The visible selector preserves notes and sources and saves the selected mode per
 ## Features
 
 - **Independent sources:** Current, any preserved revision, or a labeled external design on either side. Compare previous/new revisions or an inspected Stitch/Claude source with a proposal.
+- **Design generation and import:** The agent hands bounded page briefs to an available Stitch, Claude Design or other design workflow, extracts individual artboards from exports, and opens Current / the relevant alternative directly. Multi-screen canvases can be cropped exactly, with originals and provenance preserved.
 - **Relevant capture axes:** Light/Dark, Mobile/Desktop and Android/iOS/PWA in Mobile; locale and state where configured. Missing captures stay explicit.
 - **Precise feedback:** Source-bound numbered flags for elements/images, hover/focus RichTips, keyboard placement, whole-page notes and contextual discussions.
 - **Flag visibility:** Hold **Ctrl** to peek through hidden flags; release restores the saved setting. A visible **0–100% opacity slider** saves the preference across pages, revisions and reloads.
@@ -42,7 +43,7 @@ For Android/iOS/PWA parity, align the task, state, fixture data, locale, theme, 
 
 ## Install for Codex or Claude Code
 
-Requires **Python 3.10+** for the helpers and **Node.js 22+** to serve the review. The board uses browser-native JavaScript and no package installation/build step.
+Requires **Python 3.10+** for the helpers and **Node.js 22+** to serve the review. Artboard extraction additionally uses **Pillow**; the agent can install `skills/project-design-review/scripts/requirements-design.txt` when needed. The board uses browser-native JavaScript and no package installation/build step.
 
 ```sh
 git clone https://github.com/E-FL/project-design-review.git
@@ -92,6 +93,35 @@ Later, invoke the skill with **“Continue the review”** or **“Switch to Bri
 
 The agent's [setup helper](skills/project-design-review/scripts/configure_review.py) resolves parameters and guards concurrent updates. See [invocation and project memory](skills/project-design-review/references/invocation-and-memory.md) for the agent workflow. Remembered settings do not imply a running server or connected worker; the agent verifies those on each run.
 
+## Use Stitch, Claude Design or another designer
+
+Describe the outcome in the skill run:
+
+> Use Stitch to create alternatives for the Provider home and Customer booking pages. Show each suggested screen beside its current page, explain why it changed, and remember Stitch for this project.
+
+Or:
+
+> Compare these Claude Design exports with the current app. Cut the relevant screens out of the combined canvas and put each one in its matching review page.
+
+The agent prepares the bounded brief, uses the selected available generator, inspects its output and imports individual screens into the same viewer. Provider/project preferences are saved per project. Named artboard exports are preferred; combined canvases are cropped at exact pixel bounds, with original exports, hashes and artboard references retained. The right comparator defaults to the new source. **Open original canvas / artboard** keeps context one click away, while flags, revisions and full-size flipping stay in the review.
+
+![An isolated imported screen beside its current page in the canonical review workspace](docs/images/import-review.jpg)
+
+Stitch generation needs an authenticated available tool or browser session. Claude Design uses its available native Claude Code `/design` workflow, connected tool or accessible browser/export. Saved preferences do not create a connection; the package supplies orchestration instructions and local extraction helpers rather than a bundled hosted generator. Imported alternatives remain external evidence until a verified suggested revision is published. Native skill discovery can select this workflow for substantial design requests; an explicit skill invocation is also supported.
+
+See the [generator and screen-import workflow](skills/project-design-review/references/design-generation-and-import.md). No manifests, paths or crop coordinates need to be edited by the reviewer.
+
+Try the multi-screen extraction showcase:
+
+```sh
+python -m pip install -r skills/project-design-review/scripts/requirements-design.txt
+python scripts/create_import_demo.py ../morrow-import-review
+cd ../morrow-import-review/board
+node review-server.mjs
+```
+
+The showcase builds a fictional two-artboard contact sheet, extracts each screen and opens it in the correct product/page. It demonstrates extraction and comparison; it does not call Stitch or Claude or claim remote generation.
+
 ## Run the fictional showcase
 
 ```sh
@@ -122,11 +152,12 @@ See [worker connection and publication](skills/project-design-review/references/
 
 ```sh
 python scripts/validate_package.py
+python -m pip install -r skills/project-design-review/scripts/requirements-design.txt
 python -m unittest discover -s tests -v
 node --test skills/project-design-review/assets/comparator/review-revisions.test.mjs skills/project-design-review/assets/comparator/review-server.test.mjs
 ```
 
-Tests cover remembered invocation details, no-op resume, partial overrides, project isolation, setup conflicts, installation preservation, clean fictional generation, preserved asset hashes, protected revision publication and feedback/version handling. Browser checks cover the interactive controls; these checks do not claim physical-device parity or end-to-end Claude/Codex model execution.
+Tests cover exact crop pixels, original bytes/hashes, immutable imports, invalid mapping/bounds/axes, scoped generation briefs, remembered provider choices, setup conflicts, installation preservation, clean fictional generation, protected revision publication and feedback/version handling. Browser checks cover the interactive controls; these checks do not claim physical-device parity or end-to-end Claude/Codex model execution.
 
 ## Author and license
 

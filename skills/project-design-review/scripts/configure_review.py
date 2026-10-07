@@ -88,6 +88,16 @@ def validate(config):
         page_ids.append(page['id'])
     if len(page_ids) != len(set(page_ids)):
         raise ValueError('Page ids must be unique.')
+    generation = config.get('designGeneration', {})
+    if not isinstance(generation, dict) or set(generation) - {'provider', 'projectUrl'}:
+        raise ValueError('designGeneration accepts provider and an optional projectUrl; never store credentials here.')
+    if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,59}', str(generation.get('provider', 'auto'))):
+        raise ValueError('Use a lowercase provider id, such as stitch, claude-design, auto, agent or external.')
+    if 'projectUrl' in generation:
+        from urllib.parse import urlsplit
+        parsed = urlsplit(str(generation['projectUrl']))
+        if parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password:
+            raise ValueError('The design project URL must be HTTPS without embedded credentials.')
 
 
 def merge_config(current, details, workspace):
@@ -125,7 +135,13 @@ def merge_config(current, details, workspace):
         product.setdefault('themes', ['light', 'dark'])
     for key, value in details.items():
         if key not in ['project', 'runtime', 'schemaVersion']:
-            config[key] = value
+            if key == 'designGeneration' and isinstance(value, dict):
+                previous = config.get(key, {})
+                config[key] = {**previous, **value}
+                if ('provider' in value and value['provider'] != previous.get('provider') and 'projectUrl' not in value) or value.get('projectUrl', '') is None:
+                    config[key].pop('projectUrl', None)
+            else:
+                config[key] = value
     config.setdefault('reviewMode', 'brief')
     config.setdefault('reviewLanguage', 'en')
     if 'direction' not in config or ('reviewLanguage' in details and 'direction' not in details):
@@ -138,7 +154,7 @@ def merge_config(current, details, workspace):
     return config
 
 
-def configure(workspace, details=None, board_path=None, adopt=False, expected_version=None):
+def configure(workspace, details=None, board_path=None, adopt=False, expected_version=None, config_transform=None):
     workspace = Path(workspace).expanduser().resolve()
     workspace.mkdir(parents=True, exist_ok=True)
     profile_dir = within(workspace, '.design-review')
@@ -169,6 +185,9 @@ def configure(workspace, details=None, board_path=None, adopt=False, expected_ve
             current = read_config(board)
         else:
             current = None
+        # Importers merge against live inventory under the same setup/version lock.
+        if config_transform:
+            details = config_transform(copy.deepcopy(current), copy.deepcopy(profile))
         config = merge_config(current, details or {}, workspace)
         runtime = copy.deepcopy(profile.get('runtime', {}) if profile else {})
         changes = (details or {}).get('runtime', {})

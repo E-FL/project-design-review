@@ -1,9 +1,9 @@
 ---
 name: project-design-review
-description: Build project-based page-by-page design review workspaces with side-by-side current, revision and external-source comparisons, saved flags, discussions, Brief/Full explanations and instant full-size flipping. Use for redesigns, iterative review and Android/iOS/PWA parity.
+description: Create and review page alternatives using Stitch, Claude Design or available generators; extract individual screens from design exports into a project-based side-by-side viewer with revisions, flags and Brief/Full explanations. Use for substantial redesigns, iterative review and Android/iOS/PWA parity.
 metadata:
   author: Arik Aizikovich
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 # Page-by-page project design review
@@ -22,11 +22,19 @@ Use this skill when the decision needs a concrete alternative or wider context: 
 
 Inventory actual products, pages, states and shared components. Reuse the canonical project board. Start with the selected page; capture its current implementation before changing it. Label live, fixture, mock and inventory evidence accurately. A page without verified current/proposed captures is Awaiting visual design, not a finished proposal. Keep fictional examples separate from real project data.
 
+## Generate and bring in suggested designs
+
+When a substantial redesign asks for Stitch, Claude Design or another available designer, use this skill automatically through native skill discovery. Remember the selected generator/project in the project profile, prepare the bounded page/state brief, invoke the actual connected tool or authorized browser, inspect its output and bring it into this board. Read [design generation and screen import](references/design-generation-and-import.md) for provider handoffs and agent-managed request/import helpers.
+
+Prefer individual named artboards. When an export contains many screens, identify the relevant complete artboards and crop their exact bounds into per-page captures; retain original files, hashes, source/artboard references and extraction bounds. The reviewer sees Current / the isolated alternative immediately and can optionally open the original canvas. Never redraw an extraction, guess its page identity, substitute a platform or label agent-authored work as a provider export. The user supplies the request, not config files or crop coordinates.
+
+A saved provider preference is not a connection. Report prepared, dispatched and completed accurately; missing generator access may block generation but does not block importing accessible exports. Apply source-bound feedback to the next bounded provider pass and preserve every result. External imports become comparable sources; live suggested revisions still publish through the protected worker workflow.
+
 ## Workspace and comparisons
 
 - One board represents one project. Configure arbitrary product names; Provider and Customer are examples. Always add Shared when there is more than one product, with shared pages/components or an honest empty state.
 - Place pages on the left, independent comparators in the center, and Tools & notes / Discussion in a right drawer. Keep preview, decisions, save and export at its bottom. On narrow screens the drawer overlays content without destroying drafts.
-- Each side chooses Current, any preserved revision or a labeled external source. Default to Current / latest Suggested. The selected feedback revision remains independent of the two displayed sources and travels with links, notes and exports.
+- Each side chooses Current, any preserved revision or a labeled external source. Default to Current / latest Suggested, or the newly imported alternative after an import. Explicit review links keep their chosen sources. The selected feedback revision remains independent of the two displayed sources and travels with links, notes and exports.
 - Above the pair show relevant Light/Dark and Mobile/Desktop axes. In Mobile show relevant Android/iOS/PWA options. Keep task, state, locale and other axes stable; never substitute missing evidence under another label.
 - Inspect imported rendered captures before calling them Stitch or Claude exports. Preserve original artboards/files. If using Stitch to design the workspace itself, use a separate fictional project and adapt the inspected design onto working modules; a generated image does not prove working review behavior.
 - Support source-bound numbered flags on elements/images and general page notes. Record source id/revision/provider, exact image, view axes, normalized coordinates, optional target and raw note. Never transfer coordinates onto a changed image. Screenshot points are not fabricated DOM selectors.
