@@ -4,7 +4,7 @@ window.reviewCaptures=(()=>{
  const cards=new Set(),views=['viewport','platform','language','theme','variant'];
  const same=(a,b)=>views.every(k=>k==='platform'&&a.viewport==='desktop'||a[k]===b[k]);
  const labels=()=>({produce:'Produce this capture',retry:'Retry capture',saving:'Saving capture request…',queued:'Queued',working:'Producing capture…',ready:'Capture available',waiting:'Waiting for a connected worker. You can keep reviewing.',progress:'A worker is preparing this exact view. You can keep reviewing.',available:'Available',partial:'One side',missing:'Missing',...window.reviewConfig?.captureLabels});
- async function api(body){const response=await fetch('/api/review-captures',body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});const result=await response.json();if(!response.ok)throw new Error(result.error||'Could not save or check the capture request.');return result;}
+ async function api(body){const response=await fetch('/api/review-captures',{...(body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'}),signal:AbortSignal.timeout(10000)});const result=await response.json();if(!response.ok)throw new Error(result.error||'Could not save or check the capture request.');return result;}
  function find(spec){return Object.values(jobs).findLast(j=>j.sourceCurrent!==false&&j.pageId===spec.pageId&&j.source.id===spec.sourceId&&same(j.axes,spec.axes));}
  function update(card){
   if(!card.node.isConnected){cards.delete(card);return;}
@@ -17,7 +17,7 @@ window.reviewCaptures=(()=>{
  }
  async function load(){
   if(inFlight)return inFlight;
-  inFlight=(async()=>{const result=await api(),previous=new Set(captures.map(c=>c.requestId));jobs=result.jobs||{};captures=result.captures||[];for(const card of cards)update(card);const signature=JSON.stringify(captures);if(signature!==lastSignature){const ready=captures.filter(c=>!previous.has(c.requestId));lastSignature=signature;document.dispatchEvent(new CustomEvent('review-captures-change',{detail:{ready}}));}return result;})();
+  inFlight=(async()=>{const result=await api(),previous=new Set(captures.map(c=>c.requestId));jobs=result.jobs||{};captures=result.captures||[];for(const card of cards)update(card);document.dispatchEvent(new CustomEvent('review-captures-status',{detail:{jobs}}));const signature=JSON.stringify(captures);if(signature!==lastSignature){const ready=captures.filter(c=>!previous.has(c.requestId));lastSignature=signature;document.dispatchEvent(new CustomEvent('review-captures-change',{detail:{ready}}));}return result;})();
   try{return await inFlight;}finally{inFlight=null;}
  }
  function mount(node,spec){
@@ -35,7 +35,7 @@ window.reviewCaptures=(()=>{
    }catch(error){card.error=error.message;}finally{card.pending=false;update(card);}
   };update(card);
  }
- setInterval(()=>{if(document.visibilityState==='visible')load().catch(()=>{});},5000);
+ setInterval(()=>{if(document.visibilityState==='visible'&&!window.reviewJobs)load().catch(()=>{});},5000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load().catch(()=>{});});
  return {mount,load,list:pageId=>captures.filter(c=>c.pageId===pageId),labels};
 })();

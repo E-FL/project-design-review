@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {publishRevision} from './review-revisions.mjs';
+import {validWorkProgress,recordWorkEvent} from './review-job-progress.mjs';
 
 const states=new Set(['discussing','queued','working','ready','rejected','failed']);
 const text=(v,max)=>typeof v==='string'&&v.length<=max;
@@ -27,7 +28,7 @@ export async function updateIssue(root,input,worker=false){
     item={id:'i'+randomUUID().replaceAll('-','').slice(0,18),key:input.key,title:input.title,part:input.part,kind:input.kind,context:input.context,anchor:input.anchor||null,version:1,status:'discussing',createdAt:now(),updatedAt:now(),needsReply:!!input.message.trim(),messages:[]};
     if(input.message.trim())item.messages.push({id:randomUUID(),role:'user',text:input.message.trim(),at:now()});
     if(input.action==='approved-page'){item.status='queued';item.needsReply=false;item.approvedAt=now();item.pageApproval=input.approvedAt;item.approvedScope={context:item.context,messages:structuredClone(item.messages),reviewData:approvedReviewData};}
-    store.items[item.id]=item;
+    recordWorkEvent(item,item.status,item.work?.stage|| (item.status==='queued'?'Waiting to start':'Request saved'));store.items[item.id]=item;
   }else{
     if(!text(input.id,30)||!Number.isInteger(input.expectedVersion))return invalid('Invalid issue version');
     item=store.items[input.id];if(!item)return {code:404,body:{error:'Issue not found'}};
@@ -55,7 +56,7 @@ export async function updateIssue(root,input,worker=false){
         if(items.some(other=>other.id!==item.id&&other.status==='working'&&other.key.replace(/-r[0-9]+$/,'')===page))return {code:409,body:{error:'Another conversation is already working on this page. Keep this item queued.'}};
         item.status='working';item.work={stage:'Reviewing the approved request',startedAt:now(),...(input.workerId?{owner:input.workerId}:{})};
       }else if(input.action==='progress'){
-        if(item.status!=='working')return transitionError();if(!text(input.text,300))return invalid('Invalid work stage');item.work.stage=input.text;
+        if(item.status!=='working')return transitionError();if(!text(input.text,300))return invalid('Invalid work stage');if(input.progress!==undefined&&!validWorkProgress(input.progress))return invalid('Supply measured completed/total work units and their unit label.');item.work.stage=input.text;if(input.progress!==undefined)item.work.progress={completed:input.progress.completed,total:input.progress.total,unit:input.progress.unit};
       }else if(input.action==='reply'){
         if(item.status==='rejected')return transitionError();if(!text(input.text,12000)||!input.text.trim()||item.messages.length>=150)return invalid('Invalid response');
         item.messages.push({id:randomUUID(),role:'assistant',text:input.text.trim(),at:now()});item.needsReply=false;
@@ -69,7 +70,8 @@ export async function updateIssue(root,input,worker=false){
         }else{item.status='failed';item.work={...item.work,stage:'Needs attention',summary:input.text,finishedAt:now()};}
       }else return invalid('Invalid worker action');
     }
-    item.version++;item.updatedAt=now();
+    if(worker&&['claim','progress','complete','fail'].includes(input.action))item.work.updatedAt=now();
+    item.version++;item.updatedAt=now();if(['claim','progress','complete','fail','approve','reject','reopen'].includes(input.action))recordWorkEvent(item,item.status,input.action==='fail'?item.work.summary:item.work?.stage||item.status,item.work?.progress);
   }
   if(!states.has(item.status))throw new Error('Invalid issue state');
   const file=path.join(root,'feedback','issues.json');await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file+'.tmp',JSON.stringify(store,null,2));await fs.rename(file+'.tmp',file);

@@ -22,6 +22,8 @@ After successfully connecting a worker, set window.reviewWorkConfig={enabled:tru
 
 ## Verification
 
+Report actual stages and optional measured work units as described in [job progress](job-progress.md). The project Jobs drawer displays reports, owners and last updates across pages. Unmeasured work has no percentage; quiet reports show a possible-stall notice without changing ownership or cancelling work.
+
 Use a disposable review folder/port for chat-save-reload, reply, approval queue, protected worker claim, real working stage, result link, cancellation and stale-version tests. Preserve user notes and do not queue artificial user work on the main board.
 
 ## Publish the latest revision in the same board

@@ -3,7 +3,7 @@ window.reviewWorkspace=(()=>{
  const $=s=>document.querySelector(s),unique=v=>[...new Set(v)],names={mobile:'Mobile',desktop:'Desktop',android:'Android',ios:'iOS',pwa:'PWA',light:'Light',dark:'Dark',en:'English',he:'Hebrew',ar:'Arabic'};
  const safeImage=p=>typeof p==='string'&&/^[a-z0-9_./-]+\.(png|jpe?g|webp)$/i.test(p)&&!p.includes('..');
  let config,project,products,selectedProduct,activePair=null,footerObserver,reportTimer,tip=null,tipOwner=null,tipTimer;
- let flagOpacity=100,controlHeld=false,flagPreferenceKey,reviewMode='brief',modePreferenceKey;
+ let flagOpacity=100,controlHeld=false,flagPreferenceKey,reviewMode='brief',modePreferenceKey,selectedDrawerTab=new URL(location.href).searchParams.get('drawer')==='jobs'?'jobs':'tools';
  const axisMemory={};
  function initialize(value){
   config=value;project={id:value.project?.id||'project',title:value.project?.title||value.title||'Design review'};
@@ -75,7 +75,7 @@ window.reviewWorkspace=(()=>{
  function unavailableRevision(p,rev){selectProductForPage(p);renderPages();if(!activePair){const section=document.createElement('section');section.className='shared-empty';const title=document.createElement('h2'),text=document.createElement('p'),button=document.createElement('button');title.textContent='Preserved revision unavailable';text.textContent=p.title+' · '+rev+' could not be found. This link does not substitute another revision.';button.type='button';button.textContent='Open latest available revision';button.onclick=()=>window.reviewApp.show(p.id);section.append(title,text,button);$('#content').replaceChildren(section);}report('The preserved revision '+rev+' is unavailable. Choose an existing revision before reviewing.');}
  function report(message){const el=$('#workspace-status');el.textContent=message;el.classList.add('visible');clearTimeout(reportTimer);reportTimer=setTimeout(()=>el.classList.remove('visible'),7000);}
  function setDrawer(open){document.body.classList.toggle('drawer-open',open);$('#toggle-drawer').setAttribute('aria-expanded',String(open));if(open&&matchMedia('(max-width:1150px)').matches)$('#close-drawer').focus();}
- function drawerTab(tab,activate=true){$('#review-tools').hidden=tab!=='tools';$('#review-discussion').hidden=tab!=='discussion';document.querySelectorAll('[data-drawer-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.drawerTab===tab)));if(activate&&matchMedia('(max-width:1150px)').matches)setDrawer(true);}
+ function drawerTab(tab,activate=true){selectedDrawerTab=tab;$('#review-tools').hidden=tab!=='tools';$('#review-discussion').hidden=tab!=='discussion';if($('#review-jobs'))$('#review-jobs').hidden=tab!=='jobs';document.querySelectorAll('[data-drawer-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.drawerTab===tab)));if(activate&&matchMedia('(max-width:1150px)').matches)setDrawer(true);}
  function dockFeedback(){
   const content=$('#content'),panel=content.querySelector('.review-feedback'),toolbar=content.querySelector('.annotation-toolbar'),decision=content.querySelector('#review-decision'),approval=content.querySelector('.page-approval'),issues=content.querySelector('.page-issues');
   footerObserver?.disconnect();$('#review-tools').replaceChildren();$('#review-discussion').replaceChildren();$('#review-controls').replaceChildren();
@@ -85,7 +85,7 @@ window.reviewWorkspace=(()=>{
    function sync(){for(const original of originalActions.querySelectorAll('button')){let proxy=proxies.get(original);if(!proxy){proxy=document.createElement('button');proxy.type='button';proxy.onclick=()=>original.click();proxies.set(original,proxy);actions.append(proxy);}proxy.textContent=original.textContent;proxy.disabled=original.disabled;proxy.hidden=original.hidden;proxy.dataset.footerAction=original.hasAttribute('data-export')?'export':original.type==='submit'?'save':'reload';}status.textContent=originalStatus.textContent;}
    $('#review-controls').append(actions,status);sync();footerObserver=new MutationObserver(sync);footerObserver.observe(panel,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden','disabled']});
   }
-  drawerTab('tools',false);
+  drawerTab(selectedDrawerTab,false);
  }
  function normalize(v,index,page){const n=window.reviewViews.normalize(v,index,{defaultLanguage:config.reviewLanguage||'en',...page}),viewport=v.viewport||(/desktop|wide/i.test(v.id+' '+v.label+' '+v.variant)||v.wide?'desktop':'mobile');return{...n,viewport,variant:v.variant||(n.variant==='Wide screen'?'Default':n.variant),image:v.image||v.proposed};}
  function buildSources(page,base){
@@ -166,5 +166,14 @@ window.reviewWorkspace=(()=>{
   function show(){if(controlHeld||flagOpacity===0)return;clearTimeout(tipTimer);hideRichTip();const data=getData(),pin=data.pin;tipOwner=marker;tip=document.createElement('div');tip.className='rich-tip';tip.id='review-flag-richtip';tip.setAttribute('role','tooltip');if('popover'in HTMLElement.prototype)tip.setAttribute('popover','manual');const title=document.createElement('strong'),note=document.createElement('p'),source=document.createElement('small'),rule=document.createElement('hr'),context=document.createElement('small');title.textContent='Flag '+data.number+' · '+(pin.target||'Visual element / image');note.textContent=pin.text||'No details yet. Click the flag to write its note.';note.dir='auto';source.textContent=(pin.source?.label||pin.view||'Preserved source')+'\n'+pin.image;context.textContent=(data.page||'')+' · '+(pin.view||'')+'\nHover or focus to inspect. Click to edit in the drawer.';tip.append(title,note,source,rule,context);document.body.append(tip);if(tip.showPopover)tip.showPopover();marker.setAttribute('aria-describedby',tip.id);const r=marker.getBoundingClientRect(),t=tip.getBoundingClientRect();tip.style.left=Math.max(12,Math.min(innerWidth-t.width-12,r.left+r.width+12))+'px';tip.style.top=Math.max(12,Math.min(innerHeight-t.height-12,r.top-t.height/3))+'px';tip.onpointerenter=()=>clearTimeout(tipTimer);tip.onpointerleave=()=>{tipTimer=setTimeout(hideRichTip,180)};}
   marker.addEventListener('pointerenter',show);marker.addEventListener('focus',show);marker.addEventListener('pointerleave',()=>{tipTimer=setTimeout(()=>{if(document.activeElement!==marker)hideRichTip()},180)});marker.addEventListener('blur',()=>{tipTimer=setTimeout(hideRichTip,180)});
  }
- return {initialize,initialPage,renderPages,selectProductForPage,productId,productLabel,emptyProduct,unavailableRevision,report,mountComparison,dockFeedback,drawerTab,setDrawer,captureContext,getPairContext,bindRichTip,hideRichTip,openFull,setReviewMode,get reviewMode(){return reviewMode},get project(){return project},hasActivePage:()=>!!activePair};
+ async function openJob(job){
+  if(!await window.reviewFeedback.flush())return false;
+  if(!config.pages.some(p=>p.id===job.pageId)){report('This job’s page is no longer in the review inventory.');return false;}
+  if(job.type==='capture'){
+   const url=new URL(location.href);url.hash=job.pageId;for(const [key,value]of Object.entries(job.axes))url.searchParams.set(key,value);url.searchParams.set('rev',job.reviewRevision);url.searchParams.set('left','current');url.searchParams.set('right',job.source.id==='current'?'revision:'+job.reviewRevision:job.source.id);
+   history.pushState(null,'',url);await window.reviewApp.show(job.pageId,job.reviewRevision,'replace',true);
+  }else await window.reviewApp.show(job.pageId,job.reviewRevision);
+  return activePair?.page.id===job.pageId&&activePair?.page.revision===job.reviewRevision;
+ }
+ return {initialize,initialPage,renderPages,selectProductForPage,productId,productLabel,emptyProduct,unavailableRevision,report,mountComparison,dockFeedback,drawerTab,setDrawer,captureContext,getPairContext,bindRichTip,hideRichTip,openFull,setReviewMode,openJob,get reviewMode(){return reviewMode},get project(){return project},hasActivePage:()=>!!activePair};
 })();

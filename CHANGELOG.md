@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 — 2026-10-07
+
+Add a persistent project Jobs button and right-drawer tab for capture, design and review-detail progress across pages. Show actual stages/owners, waiting and elapsed time, last update, stale-report warnings, filters/search, exact-page/discussion actions, retry/cancel and results. Optional measured units produce truthful percentages; history retains failures/retries. Share visible polling with existing modules and preserve drafts/focus. Includes progress validation, ownership and history tests.
+
 ## 0.4.0 — 2026-10-07
 
 Add one-click asynchronous production of missing captures, with frozen source/view scope, duplicate prevention, worker ownership/version checks, real queued/working/failure states and retry. Verified supplemental captures appear in place without changing revisions, approval or notes. Top axis buttons disclose availability on both sides, one side or neither for the selected comparison. Includes capture queue/publication tests and worker commands.

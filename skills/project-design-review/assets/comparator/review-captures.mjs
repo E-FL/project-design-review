@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
+import {validWorkProgress,recordWorkEvent} from './review-job-progress.mjs';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const text=(v,max)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
@@ -66,14 +67,14 @@ export async function updateCaptureJob(root,input,worker=false){
   job={id:'c'+randomUUID().replaceAll('-','').slice(0,20),targetKey:key,projectId,pageId:page.id,productId:page.productId,pageTitle:page.title,reviewRevision:input.spec.reviewRevision,reviewLanguage:cat.config.reviewLanguage||'en',axes,
    source:{id:source.id,kind:source.kind,label:source.label||source.id,fingerprint,...(source.revision?{revision:source.revision}:{}),...(source.provider?{provider:source.provider}:{}),...(source.sourceUrl?{url:source.sourceUrl}:{})},
    ...(declared?.image?{originalImage:declared.image}:{}),...(source.hashes?.[declared?.image]||supplemental?.hash?{expectedHash:source.hashes?.[declared?.image]||supplemental.hash}:{}),
-   status:'queued',version:1,requestedAt:stamp(),updatedAt:stamp(),authorization:'produce-this-exact-capture',stage:'Waiting for a connected capture worker'};
-  store.jobs[job.id]=job;
+   status:'queued',version:1,requestedAt:stamp(),queuedAt:stamp(),updatedAt:stamp(),authorization:'produce-this-exact-capture',stage:'Waiting for a connected capture worker'};
+  recordWorkEvent(job,job.status,job.stage);store.jobs[job.id]=job;
  }else{
   if(!text(input.id,30)||!Number.isInteger(input.expectedVersion))return bad('Supply a capture request id and expectedVersion.');
   job=store.jobs[input.id];if(!job)return {code:404,body:{error:'Capture request not found.'}};
   if(job.version!==input.expectedVersion)return conflict('Capture request changed; reload its latest version.');
   if(!worker){
-   if(input.action==='retry'&&job.status==='failed'){const selected=sourceFor(cat,job.pageId,job.source.id);if(selected?.fingerprint!==job.source.fingerprint)return conflict('The source changed. Request a capture for its current evidence.');job.status='queued';job.stage='Waiting for a connected capture worker';delete job.owner;delete job.error;}
+   if(input.action==='retry'&&job.status==='failed'){const selected=sourceFor(cat,job.pageId,job.source.id);if(selected?.fingerprint!==job.source.fingerprint)return conflict('The source changed. Request a capture for its current evidence.');job.status='queued';job.queuedAt=stamp();job.stage='Waiting for a connected capture worker';delete job.owner;delete job.error;delete job.progress;delete job.startedAt;delete job.finishedAt;}
    else if(input.action==='cancel'&&['queued','working'].includes(job.status)){job.status='cancelled';job.stage='Cancelled';}
    else return {code:403,body:{error:'This action requires the capture worker.'}};
   }else{
@@ -81,10 +82,10 @@ export async function updateCaptureJob(root,input,worker=false){
    if(input.action==='claim'){
     if(job.status!=='queued')return conflict('This capture is no longer queued.');
     if(sourceFor(cat,job.pageId,job.source.id)?.fingerprint!==job.source.fingerprint)return conflict('The requested source changed; do not capture different evidence.');
-    job.status='working';job.owner=input.workerId;job.stage='Preparing the requested capture';job.startedAt=stamp();
+    job.status='working';job.owner=input.workerId;job.stage='Preparing the requested capture';job.startedAt=stamp();delete job.progress;
    }else{
     if(job.status!=='working'||job.owner!==input.workerId)return conflict('This capture is not working under this worker.');
-    if(input.action==='progress'){if(!text(input.text,300))return bad('Describe the actual capture stage.');job.stage=input.text;}
+    if(input.action==='progress'){if(!text(input.text,300))return bad('Describe the actual capture stage.');if(input.progress!==undefined&&!validWorkProgress(input.progress))return bad('Supply measured completed/total work units and their unit label.');job.stage=input.text;if(input.progress!==undefined)job.progress={completed:input.progress.completed,total:input.progress.total,unit:input.progress.unit};}
     else if(input.action==='fail'){if(!text(input.text,2000))return bad('Describe the capture failure.');job.status='failed';job.error=input.text;job.stage='Capture needs attention';job.finishedAt=stamp();}
     else if(input.action==='complete'){
      if(sourceFor(cat,job.pageId,job.source.id)?.fingerprint!==job.source.fingerprint)return conflict('The source changed before capture publication.');
@@ -103,7 +104,7 @@ export async function updateCaptureJob(root,input,worker=false){
     }else return bad('Invalid capture worker action.');
    }
   }
-  job.version++;job.updatedAt=stamp();
+  job.version++;job.updatedAt=stamp();recordWorkEvent(job,job.status,input.action==='fail'?job.error:job.stage,job.progress);
  }
  const file=path.join(root,'feedback','captures.json');await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file+'.tmp',JSON.stringify(store,null,2));await fs.rename(file+'.tmp',file);
  return {code:200,body:{job}};

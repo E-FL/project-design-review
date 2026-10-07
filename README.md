@@ -31,6 +31,7 @@ The visible selector preserves notes and sources and saves the selected mode per
 - **Design generation and import:** The agent hands bounded page briefs to an available Stitch, Claude Design or other design workflow, extracts individual artboards from exports, and opens Current / the relevant alternative directly. Multi-screen canvases can be cropped exactly, with originals and provenance preserved.
 - **Relevant capture axes:** Light/Dark, Mobile/Desktop and Android/iOS/PWA in Mobile; locale and state where configured. Missing captures stay explicit.
 - **Availability and asynchronous capture:** Top options show both sides available, one side available or missing. Each missing side offers **Produce this capture**; the exact source/view queues in one click and appears automatically after a connected worker verifies it. Review other pages while it runs; failed jobs offer retry.
+- **Project-wide progress:** A header **Jobs** button and drawer tab show waiting/working/failed/completed requests across pages, reported stages, owners, elapsed time, last update and activity history. Measured units show a percentage; unmeasured work keeps its stage. Stale reports are explicit, and queueing alone is not an automatic AI producer.
 - **Precise feedback:** Source-bound numbered flags for elements/images, hover/focus RichTips, keyboard placement, whole-page notes and contextual discussions.
 - **Flag visibility:** Hold **Ctrl** to peek through hidden flags; release restores the saved setting. A visible **0–100% opacity slider** saves the preference across pages, revisions and reloads.
 - **Instant full-size comparison:** Open either side; **Space/F** flips, arrows choose a side, **Esc** closes. Both images share scale/origin and preserve pan. Dimension mismatches are disclosed.
@@ -154,6 +155,12 @@ Missing-view requests have a separate [capture queue and publication contract](s
 ![Availability badges and an asynchronous Hebrew capture result, with the other side still requestable](docs/images/async-captures.jpg)
 
 This fictional browser verification produced a localized current screen: English has both captures, Hebrew has one, and the missing suggested side retains its **Produce this capture** button. Completion inserted the image and updated the badges while keeping the review notes and keyboard focus in place.
+
+The [Jobs drawer and worker progress contract](skills/project-design-review/references/job-progress.md) make status visible across pages. Filter/search requests, open the exact capture or discussion, retry a failed capture, or cancel its queued/working request. A worker claim shows its last report; it does not prove a continuing live connection.
+
+![Project Jobs drawer with explicitly fictional progress simulation](docs/images/job-progress.jpg)
+
+This screenshot is a **fictional job-status simulation**, labeled in the project and worker stage. The meter illustrates stated fixture checks; it does not claim a running remote generator.
 
 ## Validation
 

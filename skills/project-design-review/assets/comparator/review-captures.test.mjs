@@ -75,3 +75,29 @@ test('missing hashed revision assets require exact restoration and cannot be rep
  await f.artifact(job,png);const result=await (await f.post(completion,true,f.token)).json();assert.equal(result.job.status,'ready');
  assert.equal(result.job.capture.hash,job.expectedHash);
 });
+
+test('measured capture progress and failure history survive reload and retry without stale attempt timing',async t=>{
+ const f=await fixture(t);let {job}=await (await f.post({action:'request',spec:f.spec})).json();
+ ({job}=await (await f.post({action:'claim',id:job.id,expectedVersion:1,workerId:'worker-a'},true,f.token)).json());
+ const progress={completed:2,total:4,unit:'screens inspected'};
+ ({job}=await (await f.post({action:'progress',id:job.id,expectedVersion:2,workerId:'worker-a',text:'Inspecting the rendered screens',progress},true,f.token)).json());
+ assert.deepEqual(job.progress,progress);assert.equal(job.events.at(-1).stage,'Inspecting the rendered screens');assert.deepEqual((await f.get()).jobs[job.id].events.at(-1).progress,progress);
+ assert.equal((await f.post({action:'progress',id:job.id,expectedVersion:3,workerId:'worker-a',text:'Invalid precision',progress:{...progress,completed:5}},true,f.token)).status,400);
+ assert.equal((await f.get()).jobs[job.id].version,3);
+ ({job}=await (await f.post({action:'fail',id:job.id,expectedVersion:3,workerId:'worker-a',text:'Localized route is not prepared.'},true,f.token)).json());
+ ({job}=await (await f.post({action:'retry',id:job.id,expectedVersion:4})).json());
+ assert.equal(job.status,'queued');assert.ok(job.queuedAt);assert.equal(job.progress,undefined);assert.equal(job.startedAt,undefined);assert.equal(job.finishedAt,undefined);assert.equal(job.events.find(e=>e.status==='failed').stage,'Localized route is not prepared.');
+});
+
+test('design work exposes owned measured progress, rejects invalid units and retains activity history',async t=>{
+ const f=await fixture(t),request=async(body,worker=false)=>fetch(f.origin+(worker?'/api/review-work':'/api/review-issues'),{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',...(worker?{'x-review-worker-token':f.token}:{})},body:JSON.stringify(body)});
+ let {item}=await (await request({action:'create',key:'P01-r3',title:'Fictional studio',part:'Page',kind:'page',context:'Bounded fixture prototype',message:'Review the main action.'})).json();
+ ({item}=await (await request({action:'approve',id:item.id,expectedVersion:1})).json());
+ ({item}=await (await request({action:'claim',id:item.id,expectedVersion:2,workerId:'design-worker'},true)).json());
+ const progress={completed:1,total:3,unit:'views verified'},input={action:'progress',id:item.id,expectedVersion:3,workerId:'design-worker',text:'Verifying the prepared views',progress};
+ assert.equal((await request({...input,workerId:'another-worker'},true)).status,409);
+ ({item}=await (await request(input,true)).json());assert.deepEqual(item.work.progress,progress);assert.ok(item.work.updatedAt);assert.deepEqual(item.events.at(-1).progress,progress);
+ assert.equal((await request({...input,expectedVersion:4,progress:{completed:1,total:0,unit:'views'}},true)).status,400);
+ assert.equal((await request({...input,expectedVersion:4,progress:{completed:.1,total:3,unit:'views'}},true)).status,400);
+ ({item}=await (await request({action:'fail',id:item.id,expectedVersion:4,workerId:'design-worker',text:'The fixture preview dependency is missing.'},true)).json());assert.equal(item.status,'failed');assert.equal(item.events.at(-1).stage,'The fixture preview dependency is missing.');
+});
